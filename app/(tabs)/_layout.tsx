@@ -1,33 +1,34 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import { GlobalStyles } from "../constants/styles";
+export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
+        headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+        headerTintColor: "white",
+        tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+        tabBarActiveTintColor: GlobalStyles.colors.accent500,
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name="RecentExpenseOverview"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: "Recent Expenses",
+          tabBarLabel: "Recent",
+          tabBarIcon: ({ color, size }: any) => {
+            return <Ionicons name="hourglass" size={size} color={color} />;
+          },
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="AllExpenseOverview"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: "All Expense",
+          tabBarLabel: "All Expenses",
+          tabBarIcon: ({ color, size }: any) => {
+            return <Ionicons name="calendar" size={size} color={color} />;
+          },
         }}
       />
     </Tabs>
