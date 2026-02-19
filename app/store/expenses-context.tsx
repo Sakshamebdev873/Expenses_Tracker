@@ -1,8 +1,13 @@
 import { createContext, useReducer } from "react";
 import { DUMMY_EXPENSES } from "../components/ExpensesOutput/ExpensesOutput";
-
+type Expense = {
+  id: number;
+  amount: number;
+  description: string;
+  date: string;
+};
 export const ExpensesContext = createContext({
-  expenses: [],
+  expenses: [] as Expense[],
   addExpense: ({ description, amount, date }: any) => {},
   deleteExpense: (id: any) => {},
   updateExpense: (id: any, { description, amount, date }: any) => {},
@@ -43,8 +48,6 @@ function ExpensesContextProvider({ children }: any) {
     dispatch({ type: "DELETE", payload: id });
   }
   function updateExpense(id: any, expenseData: any) {
-    console.log(expenseData);
-
     dispatch({ type: "UPDATE", payload: { id: id, data: expenseData } });
   }
   const value = {

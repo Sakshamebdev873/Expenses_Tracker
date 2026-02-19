@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useContext, useLayoutEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import Button from "../components/ui/Button";
+import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import { ExpensesContext } from "../store/expenses-context";
@@ -9,7 +9,14 @@ import { ExpensesContext } from "../store/expenses-context";
 const ManageExpense = () => {
   const navigation = useNavigation();
   const expensesCtx = useContext(ExpensesContext);
-  const editedExpenseId = useLocalSearchParams<{ expenseId?: string }>();
+  const editedExpenseId = useLocalSearchParams<{
+    expenseId?: string | undefined;
+  }>();
+  const selectedExpense = expensesCtx.expenses.find(
+    (item) => item?.id.toString() === editedExpenseId.expenseId,
+  );
+  console.log(selectedExpense);
+
   //  !! used to convert to boolean
   const isEditing = !!editedExpenseId.expenseId;
   // it is used when we want to set any configuraion in the header and in react it is run synchronously before painting the ui onto the screen
@@ -21,19 +28,11 @@ const ManageExpense = () => {
   function cancelHandler() {
     navigation.goBack();
   }
-  function confirmHandler() {
+  function confirmHandler(data: any) {
     if (isEditing) {
-      expensesCtx.updateExpense(editedExpenseId.expenseId!, {
-        description: "Test!!!!",
-        amount: 29.99,
-        date: new Date("2026-02-19"),
-      });
+      expensesCtx.updateExpense(editedExpenseId.expenseId!, data);
     } else {
-      expensesCtx.addExpense({
-        description: "Test!!!!",
-        amount: 29.99,
-        date: new Date("2026-02-19"),
-      });
+      expensesCtx.addExpense(data);
     }
 
     router.back();
@@ -44,14 +43,13 @@ const ManageExpense = () => {
   }
   return (
     <View style={styles.container}>
-      <View style={styles.buttons}>
-        <Button style={styles.button} mode="flat" onPress={cancelHandler}>
-          Cancel
-        </Button>
-        <Button style={styles.button} onPress={confirmHandler}>
-          {isEditing ? "Update" : "Add"}
-        </Button>
-      </View>
+      <ExpenseForm
+        submitButtonLabel={isEditing ? "Update" : "Add"}
+        cancelHandler={cancelHandler}
+        confirmHandler={confirmHandler}
+        defaultValues={selectedExpense}
+      />
+
       {isEditing && (
         <View style={styles.deleteConatiner}>
           <IconButton
@@ -71,15 +69,7 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: GlobalStyles.colors.primary800,
   },
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    minWidth: 120,
-    marginHorizontal: 8,
-  },
+
   deleteConatiner: {
     marginTop: 15,
     paddingTop: 8,
